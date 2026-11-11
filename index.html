@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TechEd: What does AI do?</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef2f7; --ink: #14213d; --muted: #4a5875; --card: #ffffff;
+    --accent: #2f6fed; --mark: #ffd166; --line: #cfd8e6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0f1626; --ink: #e8eefb; --muted: #9fb0cf; --card: #18223a; --accent: #7ba3ff; --mark: #ffd166; --line: #2b3857; }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 1.0625rem/1.65 "Source Serif 4", Georgia, serif; }
+  h1, h2, h3, button, .tab { font-family: "Bricolage Grotesque", system-ui, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 4rem 1.25rem 5rem; }
+  h1 { font-size: clamp(2.4rem, 7vw, 4rem); line-height: 1.05; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 1.25rem; }
+  h1 span { background: linear-gradient(transparent 62%, var(--mark) 62%); }
+  h2 { font-size: 1.6rem; margin: 3.5rem 0 .75rem; letter-spacing: -0.01em; }
+  .lead { font-size: 1.25rem; color: var(--muted); max-width: 34em; }
+  p { max-width: 36em; }
+
+  .tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.5rem 0 1rem; }
+  .tab { border: 2px solid var(--line); background: transparent; color: var(--ink); padding: .55rem 1rem; border-radius: 999px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+  .tab[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .tab:focus-visible, .pick:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.5rem; }
+  .panel h3 { margin: 0 0 .5rem; font-size: 1.35rem; }
+  .panel p { margin: 0 0 .75rem; }
+  .eg { color: var(--muted); font-style: italic; margin: 0; }
+
+  .demo { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.5rem; }
+  .sentence { font-size: 1.4rem; font-weight: 600; font-family: "Bricolage Grotesque", system-ui, sans-serif; margin: .75rem 0 1.25rem; min-height: 2.2em; }
+  .sentence .gap { background: var(--mark); color: #14213d; padding: 0 .4rem; border-radius: 6px; }
+  .starters { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .pick { border: 2px solid var(--accent); color: var(--accent); background: transparent; border-radius: 8px; padding: .4rem .8rem; font-size: .95rem; font-weight: 600; cursor: pointer; }
+  .pick[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  .bars { margin-top: 1.25rem; display: grid; gap: .5rem; }
+  .row { display: grid; grid-template-columns: 6.5rem 1fr 3rem; align-items: center; gap: .75rem; font-family: "Bricolage Grotesque", system-ui, sans-serif; }
+  .track { height: 14px; background: var(--line); border-radius: 7px; overflow: hidden; }
+  .fill { height: 100%; width: 0; background: var(--accent); border-radius: 7px; transition: width .5s ease; }
+  .row b { text-align: right; font-weight: 600; }
+  .note { font-size: .95rem; color: var(--muted); margin: 1rem 0 0; }
+
+  ul.limits { padding-left: 1.2rem; max-width: 36em; }
+  ul.limits li { margin-bottom: .5rem; }
+  footer { margin-top: 4rem; color: var(--muted); font-size: .9rem; }
+  @media (prefers-reduced-motion: reduce) { .fill { transition: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>What does <span>AI</span> actually do?</h1>
+  <p class="lead">Artificial intelligence is software that learns patterns from large amounts of data, then uses those patterns to make a prediction, a decision, or something new.</p>
+
+  <h2>Four things AI does</h2>
+  <p>Most AI tools you meet do one or more of these. Pick one to see how it works.</p>
+  <div class="tabs" role="tablist" aria-label="What AI does"></div>
+  <div class="panel" id="panel" role="tabpanel" tabindex="0"></div>
+
+  <h2>How it predicts: try it</h2>
+  <p>A language model reads text and estimates which word is most likely to come next. Choose a sentence start and see the odds it might assign. These numbers are simplified examples, not output from a real model.</p>
+  <div class="demo">
+    <div class="starters" id="starters"></div>
+    <div class="sentence" id="sentence" aria-live="polite">Pick a sentence to begin.</div>
+    <div class="bars" id="bars"></div>
+    <p class="note">The model doesn't "know" the answer. It picks from the most likely options, which is why the same prompt can give different replies.</p>
+  </div>
+
+  <h2>What AI can't do (yet)</h2>
+  <ul class="limits">
+    <li><b>It can be wrong, and sound sure.</b> Always check important facts.</li>
+    <li><b>It reflects its training data.</b> Gaps and biases in the data show up in the results.</li>
+    <li><b>It doesn't understand like a person.</b> It finds patterns; it has no experiences or intentions.</li>
+  </ul>
+
+  <footer>Built for TechEd. Edit the <code>skills</code> and <code>demos</code> objects in the script to change the content.</footer>
+</main>
+
+<script>
+  const skills = [
+    { name: "Recognize", title: "Recognizing patterns in images and sound",
+      text: "AI learns from thousands of labeled examples until it can spot the same patterns in new ones. It separates a cat from a dog, reads handwriting, or turns speech into text.",
+      eg: "Example: your phone unlocking when it sees your face." },
+    { name: "Understand language", title: "Reading and writing human language",
+      text: "AI breaks text into small pieces and learns how they relate. That lets it translate, summarize, answer questions, and hold a conversation.",
+      eg: "Example: a chatbot explaining homework or translating a menu." },
+    { name: "Predict", title: "Predicting what happens next",
+      text: "By studying past data, AI estimates future outcomes: which movie you'll like, how busy a road will be, or when a machine part may fail.",
+      eg: "Example: a map app estimating your arrival time." },
+    { name: "Create", title: "Generating new content",
+      text: "Generative AI produces new text, images, music, or code based on what it learned. It combines patterns in ways that look original.",
+      eg: "Example: turning a written description into a picture." }
+  ];
+
+  const demos = {
+    "The sky is": [["blue", 62], ["clear", 18], ["falling", 4], ["gray", 12]],
+    "I drink coffee in the": [["morning", 71], ["evening", 9], ["office", 12], ["rain", 3]],
+    "Dogs like to": [["play", 38], ["bark", 20], ["run", 24], ["swim", 8]]
+  };
+
+  const tabs = document.querySelector(".tabs"), panel = document.getElementById("panel");
+  function showSkill(i) {
+    [...tabs.children].forEach((b, j) => b.setAttribute("aria-selected", i === j));
+    const s = skills[i];
+    panel.innerHTML = `<h3>${s.title}</h3><p>${s.text}</p><p class="eg">${s.eg}</p>`;
+  }
+  skills.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.className = "tab"; b.role = "tab"; b.textContent = s.name;
+    b.onclick = () => showSkill(i);
+    tabs.appendChild(b);
+  });
+  showSkill(0);
+
+  const starters = document.getElementById("starters"), sentence = document.getElementById("sentence"), bars = document.getElementById("bars");
+  function showDemo(start, btn) {
+    [...starters.children].forEach(b => b.setAttribute("aria-pressed", b === btn));
+    sentence.innerHTML = `${start} <span class="gap">&nbsp;?&nbsp;</span>`;
+    bars.innerHTML = "";
+    demos[start].slice().sort((a, b) => b[1] - a[1]).forEach(([w, p]) => {
+      const r = document.createElement("div");
+      r.className = "row";
+      r.innerHTML = `<span>${w}</span><div class="track"><div class="fill"></div></div><b>${p}%</b>`;
+      bars.appendChild(r);
+      requestAnimationFrame(() => requestAnimationFrame(() => r.querySelector(".fill").style.width = p + "%"));
+    });
+  }
+  Object.keys(demos).forEach(k => {
+    const b = document.createElement("button");
+    b.className = "pick"; b.textContent = k + "…"; b.setAttribute("aria-pressed", "false");
+    b.onclick = () => showDemo(k, b);
+    starters.appendChild(b);
+  });
+</script>
+</body>
+</html>
